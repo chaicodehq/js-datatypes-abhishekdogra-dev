@@ -63,4 +63,77 @@
  */
 export function validateForm(formData) {
   // Your code here
+
+  if (typeof formData !== "object" || formData === null) {
+    return { isValid: false, errors: { form: "Invalid form data" } };
+  }
+  let errors = {};
+  let isValid = true;
+
+  if (
+    typeof formData.name !== "string" ||
+    formData.name.trim() === "" ||
+    formData.name.trim().length < 2 ||
+    formData.name.trim().length > 50
+  ) {
+    errors.name = "Name must be 2-50 characters";
+    isValid = false;
+  }
+
+  if (
+    typeof formData.email !== "string" ||
+    formData.email.indexOf("@") !== formData.email.lastIndexOf("@") ||
+    formData.email.indexOf("@") === -1 ||
+    formData.email.indexOf(".") === -1
+  ) {
+    isValid = false;
+    errors.email = "Invalid email format";
+  }
+
+  let firstChar = formData.phone.charAt(0);
+  if (
+    typeof formData.phone !== "string" ||
+    formData.phone.trim().length !== 10 ||
+    !["6", "7", "8", "9"].includes(firstChar) ||
+    !/^\d{10}$/.test(formData.phone)
+  ) {
+    isValid = false;
+    errors.phone = "Invalid Indian phone number";
+  }
+
+  let age = Number(formData.age);
+  if (isNaN(age) || !Number.isInteger(age) || age < 16 || age > 100) {
+    isValid = false;
+    errors.age = "Age must be an integer between 16 and 100";
+  }
+
+  if (
+    typeof formData.pincode !== "string" ||
+    !/^\d{6}$/.test(formData.pincode) ||
+    formData.pincode.trim().charAt(0) === "0"
+  ) {
+    isValid = false;
+    errors.pincode = "Invalid Indian pincode";
+  }
+
+  if (
+    formData.state === null ||
+    formData.state === undefined ||
+    formData.state.trim() === ""
+  ) {
+    isValid = false;
+    errors.state = "State is required";
+  }
+  // *   7. agreeTerms: must be truthy (Boolean(agreeTerms) === true).
+  // *      Falsy values: 0, "", null, undefined, NaN, false
+  // *      Error: "Must agree to terms"
+
+  if (!formData.agreeTerms) {
+    isValid = false;
+    errors.agreeTerms = "Must agree to terms";
+  }
+  return {
+    isValid,
+    errors,
+  };
 }
